@@ -1,4 +1,4 @@
-PROJECT = JLRPOCX015.Google-Maps
+PROJECT = JLRPOCX015.GoogleMaps
 INSTALL_FILES = images js icon.png index.html
 WRT_FILES = DNA_common css icon.png index.html setup config.xml images js manifest.json README.md
 VERSION := 0.0.1
@@ -10,8 +10,10 @@ ifndef TIZEN_IP
 TIZEN_IP=TizenVTC
 endif
 
+dev: clean dev-common
+	zip -r $(PROJECT).wgt $(WRT_FILES)
+
 wgtPkg: common
-	#cp -rf ../DNA_common
 	zip -r $(PROJECT).wgt config.xml css icon.png index.html js images DNA_common
 
 config:
@@ -26,18 +28,18 @@ kill.xwalk:
 	ssh root@$(TIZEN_IP) "pkill xwalk"
 
 kill.feb1:
-	ssh app@$(TIZEN_IP) "pkgcmd -k JLRPOCX015.Google-Maps"
+	ssh app@$(TIZEN_IP) "pkgcmd -k JLRPOCX015.GoogleMaps"
 
 run: install
 	ssh app@$(TIZEN_IP) "export DBUS_SESSION_BUS_ADDRESS='unix:path=/run/user/5000/dbus/user_bus_socket' && xwalkctl | egrep -e 'GoogleMaps' | awk '{print $1}' | xargs --no-run-if-empty xwalk-launcher -d "
 
 run.feb1: install.feb1
-	ssh app@$(TIZEN_IP) "app_launcher -s JLRPOCX015.Google-Maps -d "
+	ssh app@$(TIZEN_IP) "app_launcher -s JLRPOCX015.GoogleMaps -d "
 
 install.feb1: deploy
 ifndef OBS
 	-ssh app@$(TIZEN_IP) "pkgcmd -u -n JLRPOCX015 -q"
-	ssh app@$(TIZEN_IP) "pkgcmd -i -t wgt -p /home/app/JLRPOCX015.Google-Maps.wgt -q"
+	ssh app@$(TIZEN_IP) "pkgcmd -i -t wgt -p /home/app/JLRPOCX015.GoogleMaps.wgt -q"
 endif
 
 install: deploy
@@ -48,7 +50,7 @@ endif
 
 $(PROJECT).wgt : wgt
 
-deploy: wgtPkg
+deploy: dev
 ifndef OBS
 	scp $(PROJECT).wgt app@$(TIZEN_IP):/home/app
 endif
@@ -57,7 +59,7 @@ all:
 	@echo "Nothing to build"
 
 clean:
-	-rm $(PROJECT).wgt
+	-rm -f $(PROJECT).wgt
 	-rm -rf DNA_common
 
 
@@ -66,7 +68,7 @@ boxcheck: tizen-release
 
 install_obs: 
 	mkdir -p ${DESTDIR}/opt/usr/apps/.preinstallWidgets
-	cp -r JLRPOCX015.Google-Maps.wgt ${DESTDIR}/opt/usr/apps/.preinstallWidgets/
+	cp -r JLRPOCX015.GoogleMaps.wgt ${DESTDIR}/opt/usr/apps/.preinstallWidgets/
 
 common: /opt/usr/apps/common-apps
 	cp -r /opt/usr/apps/common-apps DNA_common
@@ -77,6 +79,7 @@ common: /opt/usr/apps/common-apps
 
 dev-common: ../common-app
 	cp -rf ../common-app ./DNA_common
+	rm -rf DNA_common/.git
 
 ../common-app:
 	#@echo "Please checkout Common Assets"

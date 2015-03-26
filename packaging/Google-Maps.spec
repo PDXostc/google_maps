@@ -1,4 +1,4 @@
-Name:       Google-Maps
+Name:       GoogleMaps
 Summary:    A HTML Google Maps application
 Version:    0.0.1
 Release:    1
@@ -31,11 +31,11 @@ rm -rf %{buildroot}
 make install_obs "OBS=1" DESTDIR="%{?buildroot}"
 
 %post
-su app -c "pkgcmd -i -t wgt -p /opt/usr/apps/.preinstallWidgets/JLRPOCX015.Google-Maps.wgt -q"
+su app -c "pkgcmd -i -t wgt -p /opt/usr/apps/.preinstallWidgets/JLRPOCX015.GoogleMaps.wgt -q"
 
 %postun
 su app -c "pkgcmd -u -n JLRPOCX015 -q"
 
 %files
 %defattr(-,root,root,-)
-/opt/usr/apps/.preinstallWidgets/JLRPOCX015.Google-Maps.wgt
+/opt/usr/apps/.preinstallWidgets/JLRPOCX015.GoogleMaps.wgt
